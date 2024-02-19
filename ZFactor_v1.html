@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Z' Factor Calculator</title>
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+</head>
+<body>
+<div id="controls">
+    <label for="meanNeg">Mean Neg:</label>
+    <input type="range" id="meanNeg" min="0" max="100" value="30">
+    <br>
+    <label for="stdevNeg">StDev Neg:</label>
+    <input type="range" id="stdevNeg" min="1" max="20" value="3">
+    <br>
+    <label for="meanPos">Mean Pos:</label>
+    <input type="range" id="meanPos" min="0" max="100" value="70">
+    <br>
+    <label for="stdevPos">StDev Pos:</label>
+    <input type="range" id="stdevPos" min="1" max="20" value="3">
+    <br>
+    <input type="checkbox" id="showNeg" checked> <label for="showNeg">Show Negative</label>
+    <input type="checkbox" id="showPos" checked> <label for="showPos">Show Positive</label>
+    <br>
+    <input type="checkbox" id="shade" checked> <label for="shade">Shade</label>
+    <br>
+    <div id="zFactor">Z' Factor: <span id="zFactorValue">0.0</span></div>
+</div>
+<canvas id="plotCanvas" width="600" height="300"></canvas>
+
+<script>
+    const canvas = document.getElementById('plotCanvas');
+    const ctx = canvas.getContext('2d');
+    const zFactorLabel = document.getElementById('zFactorValue');
+
+    function gaussianDistribution(x, mean, stdev) {
+        return Math.exp(-((x - mean) ** 2) / (2 * stdev ** 2)) / (stdev * Math.sqrt(2 * Math.PI));
+    }
+
+    function calculateZFactor(meanNeg, stdevNeg, meanPos, stdevPos) {
+        const positiveMean = meanPos;
+        const negativeMean = meanNeg;
+        const positiveStdev = stdevPos;
+        const negativeStdev = stdevNeg;
+
+        return 1 - (3 * (positiveStdev + negativeStdev)) / Math.abs(positiveMean - negativeMean);
+    }
+
+    function updatePlot(meanNeg, stdevNeg, meanPos, stdevPos, showNeg, showPos, shade) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const xScale = canvas.width / 100;
+        const yScale = canvas.height;
+
+        const xValues = [...Array(100).keys()];
+        const yValuesNeg = xValues.map(x => gaussianDistribution(x, meanNeg, stdevNeg));
+        const yValuesPos = xValues.map(x => gaussianDistribution(x, meanPos, stdevPos));
+
+        if (showNeg) {
+            ctx.fillStyle = 'gray';
+            for (let i = 0; i < 100; i++) {
+                const x = i * xScale;
+                const y = yValuesNeg[i] * yScale;
+                if (i === 0) ctx.beginPath();
+                ctx.lineTo(x, canvas.height - y);
+            }
+            if (shade) ctx.fill();
+            ctx.stroke();
+        }
+
+        if (showPos) {
+            ctx.fillStyle = 'darkorange';
+            for (let i = 0; i < 100; i++) {
+                const x = i * xScale;
+                const y = yValuesPos[i] * yScale;
+                if (i === 0) ctx.beginPath();
+                ctx.lineTo(x, canvas.height - y);
+            }
+            if (shade) ctx.fill();
+            ctx.stroke();
+        }
+
+        const zFactor = calculateZFactor(meanNeg, stdevNeg, meanPos, stdevPos);
+        zFactorLabel.textContent = zFactor.toFixed(2);
+    }
+
+    function update() {
+        const meanNeg = parseFloat(document.getElementById('meanNeg').value);
+        const stdevNeg = parseFloat(document.getElementById('stdevNeg').value);
+        const meanPos = parseFloat(document.getElementById('meanPos').value);
+        const stdevPos = parseFloat(document.getElementById('stdevPos').value);
+        const showNeg = document.getElementById('showNeg').checked;
+        const showPos = document.getElementById('showPos').checked;
+        const shade = document.getElementById('shade').checked;
+
+        updatePlot(meanNeg, stdevNeg, meanPos, stdevPos, showNeg, showPos, shade);
+    }
+
+    document.querySelectorAll('input[type=range]').forEach(input => {
+        input.addEventListener('input', update);
+    });
+
+    document.querySelectorAll('input[type=checkbox]').forEach(input => {
+        input.addEventListener('change', update);
+    });
+
+    // Initial update
+    update();
+</script>
+</body>
+</html>
