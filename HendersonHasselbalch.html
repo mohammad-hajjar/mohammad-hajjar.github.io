@@ -1,104 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>pKa Calculator</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    .container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    label {
-        display: block;
-        margin-bottom: 10px;
-    }
-    input[type="number"], select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-    input[type="range"] {
-        width: 100%;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HendersonHasselbalch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="number"], input[type="range"] {
+            width: 100px;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h2>pKa Calculator</h2>
-    <label for="pKa">pKa:</label>
-    <input type="number" id="pKa" step="0.01">
-    
-    <label for="group">Select group:</label>
-    <select id="group">
-        <option value="amine">Amine</option>
-        <option value="hydroxyl">Hydroxyl</option>
-    </select>
-
-    <label for="pH">pH:</label>
-    <input type="range" id="pH" min="0" max="14" step="0.1" value="7">
-    <span id="pHValue">pH: 7</span>
-
-    <div id="results">
-        <h3>Henderson-Hasselbalch Equation:</h3>
-        <p id="equation">-</p>
-        <h3>At given values:</h3>
-        <p id="values">-</p>
-        <h3>Percentage Protonated:</h3>
-        <p id="percentProtonated">-</p>
-        <h3>Percentage Charged:</h3>
-        <p id="percentCharged">-</p>
+    <div class="container">
+        <h2>HendersonHasselbalch</h2>
+        <label for="pKa">pKa:</label>
+        <input type="number" id="pKa" min="0" step="0.1" value="7">
+        <br>
+        <label for="pH">pH:</label>
+        <input type="range" id="pH" min="0" max="14" value="7">
+        <br>
+        <div id="equation"></div>
+        <div id="result"></div>
     </div>
-</div>
 
-<script>
-    var pHSlider = document.getElementById("pH");
-    var pHValue = document.getElementById("pHValue");
-    pHValue.innerHTML = "pH: " + pHSlider.value;
+    <script>
+        const pKaInput = document.getElementById('pKa');
+        const pHInput = document.getElementById('pH');
+        const equationOutput = document.getElementById('equation');
+        const resultOutput = document.getElementById('result');
 
-    pHSlider.oninput = function() {
-        pHValue.innerHTML = "pH: " + this.value;
-        updateResults();
-    };
+        function updateEquationAndResult() {
+            const pKa = parseFloat(pKaInput.value);
+            const pH = parseFloat(pHInput.value);
 
-    document.getElementById("pKa").oninput = updateResults;
-    document.getElementById("group").onchange = updateResults;
+            const AminusHA = Math.pow(10, pH - pKa);
+            const percentProtonated = (1 / (1 + AminusHA)) * 100;
 
-    function updateResults() {
-        var pKa = parseFloat(document.getElementById("pKa").value);
-        var group = document.getElementById("group").value;
-        var pH = parseFloat(document.getElementById("pH").value);
-
-        var A, HA, percentProtonated, percentCharged;
-
-        if (group === "amine") {
-            A = 10 ** (pH - pKa);
-            HA = 1 / (1 + (10 ** (pH - pKa)));
-        } else if (group === "hydroxyl") {
-            A = 1 / (1 + (10 ** (pH - pKa)));
-            HA = 10 ** (pH - pKa);
+            equationOutput.innerHTML = `pH = pKa + log([A⁻] / [HA]) = ${pKa} + log(${AminusHA.toFixed(2)})`;
+            resultOutput.innerHTML = `Percent protonated: ${percentProtonated.toFixed(2)}%`;
         }
 
-        percentProtonated = (A / (A + HA)) * 100;
-        percentCharged = 100 - percentProtonated;
+        pKaInput.addEventListener('input', updateEquationAndResult);
+        pHInput.addEventListener('input', updateEquationAndResult);
 
-        document.getElementById("equation").innerHTML = `${group === "amine" ? "Amine" : "Hydroxyl"} + H⁺ ⇌ ${group === "amine" ? "HA" : "A"}`;
-        document.getElementById("values").innerHTML = `A: ${A.toFixed(2)}, HA: ${HA.toFixed(2)}`;
-        document.getElementById("percentProtonated").innerHTML = percentProtonated.toFixed(2) + "%";
-        document.getElementById("percentCharged").innerHTML = percentCharged.toFixed(2) + "%";
-    }
-</script>
+        // Initial update
+        updateEquationAndResult();
+    </script>
 </body>
 </html>
