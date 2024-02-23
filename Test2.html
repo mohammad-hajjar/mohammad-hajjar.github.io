@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HendersonHasselbalch</title>
+    <title>Henderson Hasselbalch</title>
     <style>
         body {
             font-family: Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+            background-color: #fff;
+            text-align: center;
         }
         .container {
-            text-align: center;
-            padding: 20px;
+            margin-top: 50px;
+            margin-bottom: 50px;
         }
         input[type="number"], input[type="range"] {
             width: 100px;
             margin: 10px;
         }
         #equation {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -38,6 +35,8 @@
         <input type="range" id="pH" min="0" max="14" value="7">
         <br>
         <div id="equation"></div>
+        <div id="explicitEquation"></div>
+        <br>
         <div id="result"></div>
     </div>
 
@@ -45,6 +44,7 @@
         const pKaInput = document.getElementById('pKa');
         const pHInput = document.getElementById('pH');
         const equationOutput = document.getElementById('equation');
+        const explicitEquationOutput = document.getElementById('explicitEquation');
         const resultOutput = document.getElementById('result');
 
         function updateEquationAndResult() {
@@ -52,14 +52,12 @@
             const pH = parseFloat(pHInput.value);
 
             const AminusHA = Math.pow(10, pH - pKa);
-            const ratioHAtoA = (1 / AminusHA).toFixed(3);
+            const ratioHAtoA = (1 / AminusHA).toFixed(2);
             const percentProtonated = (1 / (1 + AminusHA)) * 100;
 
             equationOutput.innerHTML = `pH = pKa + log([A⁻] / [HA])`;
-            resultOutput.innerHTML = `Percent protonated: ${percentProtonated.toFixed(2)}%`;
-
-            // Update pH value display
-            pHInput.nextElementSibling.textContent = pH;
+            explicitEquationOutput.innerHTML = `${pH} = ${pKa} + log(${ratioHAtoA})`;
+            resultOutput.innerHTML = `Percent Protonated: ${percentProtonated.toFixed(2)}%`;
         }
 
         pKaInput.addEventListener('input', updateEquationAndResult);
