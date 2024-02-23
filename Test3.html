@@ -11,6 +11,7 @@
             padding: 0;
             background-color: #fff;
             text-align: center;
+            color: black; /* Keep everything black */
         }
         .container {
             margin-top: 50px;
@@ -22,15 +23,6 @@
         }
         #equation {
             margin-bottom: 20px;
-        }
-        /* Gradient color for the decimals */
-        .gradient-text {
-            background: linear-gradient(to right, #00bcd4, #00bcd4) bottom;
-            background-size: 100% 1px;
-            background-repeat: no-repeat;
-            background-position: 0 95%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
@@ -65,7 +57,7 @@
             const percentProtonated = (1 / (1 + AminusHA)) * 100;
 
             equationOutput.innerHTML = `pH = pKa + log([A⁻] / [HA])`;
-            explicitEquationOutput.innerHTML = `${pH} = ${pKa} + log(<span class="gradient-text">${ratioHAtoA}</span>)`;
+            explicitEquationOutput.innerHTML = `${pH} = ${pKa} + log(${ratioHAtoA})`;
             resultOutput.innerHTML = `Percent Protonated: ${percentProtonated.toFixed(2)}%`;
         }
 
