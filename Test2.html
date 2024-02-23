@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Henderson Hasselbalch</title>
+    <title>HendersonHasselbalch</title>
     <style>
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -27,12 +27,12 @@
 </head>
 <body>
     <div class="container">
-        <h2>Henderson Hasselbalch</h2>
+        <h2>HendersonHasselbalch</h2>
         <label for="pKa">pKa:</label>
         <input type="number" id="pKa" min="0" step="0.1" value="7">
         <br>
         <label for="pH">pH:</label>
-        <input type="range" id="pH" min="0" max="14" value="7">
+        <input type="range" id="pH" min="0" max="14" step="0.1" value="7">
         <br>
         <div id="equation"></div>
         <div id="explicitEquation"></div>
@@ -52,7 +52,7 @@
             const pH = parseFloat(pHInput.value);
 
             const AminusHA = Math.pow(10, pH - pKa);
-            const ratioHAtoA = (1 / AminusHA).toFixed(2);
+            const ratioHAtoA = (1 / AminusHA);
             const percentProtonated = (1 / (1 + AminusHA)) * 100;
 
             equationOutput.innerHTML = `pH = pKa + log([A⁻] / [HA])`;
