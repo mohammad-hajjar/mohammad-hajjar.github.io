@@ -11,7 +11,7 @@
             padding: 0;
             background-color: #fff;
             text-align: center;
-            color: black; /* Keep everything black */
+            color: black;
         }
         .container {
             margin-top: 50px;
@@ -28,7 +28,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>HendersonHasselbalch</h2>
+        <h2>Henderson Hasselbalch</h2>
         <label for="pKa">pKa:</label>
         <input type="number" id="pKa" min="0" step="0.1" value="7">
         <br>
@@ -52,12 +52,14 @@
             const pKa = parseFloat(pKaInput.value);
             const pH = parseFloat(pHInput.value);
 
-            const AminusHA = Math.pow(10, pH - pKa);
-            const ratioHAtoA = (1 / AminusHA);
+            let AminusHA = Math.pow(10, pH - pKa);
+            AminusHA = AminusHA.toFixed(3);
+            AminusHA = Number.parseFloat(AminusHA).toExponential();
+
             const percentProtonated = (1 / (1 + AminusHA)) * 100;
 
             equationOutput.innerHTML = `pH = pKa + log([A⁻] / [HA])`;
-            explicitEquationOutput.innerHTML = `${pH} = ${pKa} + log(${ratioHAtoA})`;
+            explicitEquationOutput.innerHTML = `${pH} = ${pKa} + log(${AminusHA})`;
             resultOutput.innerHTML = `Percent Protonated: ${percentProtonated.toFixed(2)}%`;
         }
 
